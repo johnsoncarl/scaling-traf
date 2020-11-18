@@ -17,19 +17,19 @@ import (
 )
 
 type Message struct {
-	PeerId   string
+	PeerI    string
 	Location string
 }
 
-func LocationData(str string){
-	msg := &Message{}
-	msg.PeerId := peer.ID
-	msg.Location := str
-	return msg
+var msg Message
+
+func LocationData(str string, peerID string) {
+	msg.PeerI = peerID
+	msg.Location = str
 }
 
 func GetLocationData() Message {
-	return Message
+	return msg
 }
 
 func handleStream(stream network.Stream) {
@@ -38,13 +38,13 @@ func handleStream(stream network.Stream) {
 	// Create a buffer stream for non blocking read and write.
 	rw := bufio.NewReadWriter(bufio.NewReader(stream), bufio.NewWriter(stream))
 
-	go readData(rw)
+	go readData(rw, "")
 	go writeData(rw)
 
 	// 'stream' will stay open until you close it (or the other side closes it).
 }
 
-func readData(rw *bufio.ReadWriter) {
+func readData(rw *bufio.ReadWriter, addrAsString string) {
 	for {
 		str, err := rw.ReadString('\n') // TO READ DATA THIS CAN BE USED
 		if err != nil {
@@ -53,7 +53,7 @@ func readData(rw *bufio.ReadWriter) {
 		}
 
 		// message <- str
-		go LocationData(str)
+		go LocationData(str, addrAsString)
 
 		if str == "" {
 			return
@@ -116,6 +116,8 @@ func main() {
 	// 0.0.0.0 will listen on any interface device.
 	sourceMultiAddr, _ := multiaddr.NewMultiaddr(fmt.Sprintf("/ip4/%s/tcp/%d", cfg.listenHost, cfg.listenPort))
 
+	addrAsString := fmt.Sprintf("/ip4/%s/tcp/%d", cfg.listenHost, cfg.listenPort)
+
 	// libp2p.New constructs a new libp2p Host.
 	// Other options can be added here.
 	host, err := libp2p.New(
@@ -152,7 +154,7 @@ func main() {
 		rw := bufio.NewReadWriter(bufio.NewReader(stream), bufio.NewWriter(stream))
 
 		go writeData(rw)
-		go readData(rw)
+		go readData(rw, addrAsString)
 		fmt.Println("Connected to:", peer)
 	}
 
