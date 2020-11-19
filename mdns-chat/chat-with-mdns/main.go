@@ -53,7 +53,7 @@ func readData(rw *bufio.ReadWriter, addrAsString string) {
 		}
 
 		// message <- str
-		go LocationData(str, addrAsString)
+		LocationData(str, addrAsString)
 
 		if str == "" {
 			return
