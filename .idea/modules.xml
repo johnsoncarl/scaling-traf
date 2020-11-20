@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/-1243059349/P2P_Trial.iml" filepath="$PROJECT_DIR$/.idea/modules/-1243059349/P2P_Trial.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/1807062397/P2P_Trial.app.iml" filepath="$PROJECT_DIR$/.idea/modules/1807062397/P2P_Trial.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/184411004/P2P_Trial.chat.iml" filepath="$PROJECT_DIR$/.idea/modules/184411004/P2P_Trial.chat.iml" />
+    </modules>
+  </component>
+</project>
