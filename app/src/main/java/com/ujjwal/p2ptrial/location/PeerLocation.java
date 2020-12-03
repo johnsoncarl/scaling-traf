@@ -1,18 +1,32 @@
 package com.ujjwal.p2ptrial.location;
 
+import androidx.annotation.NonNull;
+
 public class PeerLocation {
     private String peerId;
     private double lat;
     private double log;
     private long lastUpdate;
 
-    PeerLocation (String peerId, double lat, double log, long lastUpdate) throws RuntimeException {
+    public PeerLocation () {}
+
+    public PeerLocation (@NonNull String peerId, double lat, double log, long lastUpdate) throws IllegalArgumentException {
         if (peerId.equals(""))
-            throw new RuntimeException("PeerID \"" + peerId + "\" is invalid.");
+            throw new IllegalArgumentException("PeerID \"" + peerId + "\" is invalid.");
         this.setPeerId(peerId);
         this.setLat(lat);
         this.setLog(log);
         this.setLastUpdate(lastUpdate);
+    }
+
+    @Override
+    public String toString() {
+        return "PeerLocation{" +
+                "peerId='" + peerId + '\'' +
+                ", lat=" + lat +
+                ", log=" + log +
+                ", lastUpdate=" + lastUpdate +
+                '}';
     }
 
     public String getPeerId() {

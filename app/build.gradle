@@ -46,4 +46,13 @@ dependencies {
     implementation 'com.google.android.gms:play-services-location:17.1.0'
     implementation 'com.google.android.gms:play-services-maps:17.0.0'
     implementation 'com.google.android.libraries.places:places:2.4.0'
+
+    implementation "androidx.room:room-runtime:2.2.5"
+    annotationProcessor "androidx.room:room-compiler:2.2.5"
+    // optional - RxJava support for Room
+    implementation "androidx.room:room-rxjava2:2.2.5"
+    // optional - Guava support for Room, including Optional and ListenableFuture
+    implementation "androidx.room:room-guava:2.2.5"
+    // optional - Test helpers
+    testImplementation "androidx.room:room-testing:2.2.5"
 }
