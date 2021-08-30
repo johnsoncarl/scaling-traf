@@ -13,6 +13,8 @@ import android.widget.Switch;
 import android.widget.Toast;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.database.FirebaseDatabase;
+import com.ujjwal.p2ptrial.location.FirebaseLogger;
 import com.ujjwal.p2ptrial.location.LocationUpdates;
 import com.ujjwal.p2ptrial.location.P2pNetwork;
 import com.ujjwal.p2ptrial.location.PeerLocation;
@@ -32,6 +34,7 @@ public class Launcher extends AppCompatActivity {
 //    private FusedLocationProviderClient fusedLocationClient;
     public static P2pNetwork pNetwork;
     private Long INTERVAL = 1000L;
+    public static FirebaseDatabase database;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,8 +42,9 @@ public class Launcher extends AppCompatActivity {
         setContentView(R.layout.activity_launcher);
 
         pNetwork = new P2pNetwork(this);
+        database = FirebaseDatabase.getInstance();
 
-        pNetwork.sendLocation(Launcher.this, INTERVAL);
+        pNetwork.sendLocation(Launcher.this, INTERVAL, database);
         pNetwork.fetchPeerLocation();
 
         findViewById(R.id.maps).setOnClickListener(new View.OnClickListener() {
@@ -53,6 +57,12 @@ public class Launcher extends AppCompatActivity {
         ((Switch) findViewById(R.id.switch1)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 pNetwork.setLogging(isChecked);
+            }
+        });
+
+        ((Switch) findViewById(R.id.switch2)).setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                pNetwork.setServerLogging(isChecked);
             }
         });
 

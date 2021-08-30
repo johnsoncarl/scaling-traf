@@ -2,13 +2,22 @@ package com.ujjwal.p2ptrial.location;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
+import android.provider.ContactsContract;
+import android.util.Log;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.ujjwal.p2ptrial.location.logdb.LogDatabase;
 import com.ujjwal.p2ptrial.location.logdb.LogDbHelper;
 import com.ujjwal.p2ptrial.location.logdb.model.ErrorLog;
 import com.ujjwal.p2ptrial.location.logdb.model.Session;
 import com.ujjwal.p2ptrial.location.logdb.model.SessionActivity;
 
+import static com.ujjwal.p2ptrial.location.logdb.LogDbHelper.DATABASE_NAME;
+
 public class Logger {
+    private static final String TAG = "Logger";
+    
     public final LogDbHelper logDb;
     public final SQLiteDatabase db;
 

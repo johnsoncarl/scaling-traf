@@ -20,6 +20,7 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.database.FirebaseDatabase;
 
 import chat.Chat;
 
@@ -29,7 +30,9 @@ public class P2pNetwork {
     public static final int PAIR = 3;
     public static final int LAT_LONG = 4;
     private static final String TAG = "P2pNetwork";
-    public static boolean LOGGING_ENABLED = true;
+    public static String PEER_ID;
+    private static boolean LOCAL_LOGGING_ENABLED = true;
+    private static boolean SERVER_LOGGING_ENABLED = true;
     public static final int SESSION = 0;
     public static final int ACTIVITY = 1;
     public static final int ERROR = 2;
@@ -42,6 +45,7 @@ public class P2pNetwork {
     private FusedLocationProviderClient fusedLocationProviderClient;
     private LocationRequest locationRequest;
     private LocationCallback locationCallback;
+    private FirebaseLogger fbLogger;
 
     public P2pNetwork(Context context) {
         init(context);
@@ -59,7 +63,8 @@ public class P2pNetwork {
                 String peerId = Chat.chat();
 
                 peerId = peerId.equals("") ? "self" : peerId;
-                if (LOGGING_ENABLED)
+                PEER_ID = peerId;
+                if (LOCAL_LOGGING_ENABLED)
                     writeLog(SESSION, peerId + "," + inv + "," + System.currentTimeMillis());
             }
         });
@@ -96,18 +101,25 @@ public class P2pNetwork {
 
     public String fetchMessages() {
         String cm = Chat.passMessages();
-        if (LOGGING_ENABLED && !cm.equals(""))
+        if (LOCAL_LOGGING_ENABLED && !cm.equals(""))
             writeLog(ACTIVITY, "" + System.currentTimeMillis() + "," + cm);
         return cm;
     }
 
     public void publishMessage(String msg) {
-        if (LOGGING_ENABLED && msg != null && !msg.equals(""))
+        if (LOCAL_LOGGING_ENABLED && msg != null && !msg.equals(""))
             writeLog(ACTIVITY, System.currentTimeMillis() + ",0,self," + msg);
+        if (SERVER_LOGGING_ENABLED && msg != null && !msg.equals(""))
+            fbLogger.logSessionActivity(System.currentTimeMillis() + ",0,self," + msg);
         Chat.transmitLocation(msg);
     }
 
     public void sendLocation(Activity activity, long interval) {
+        sendLocation(activity, interval, null);
+    }
+
+    public void sendLocation(Activity activity, long interval, FirebaseDatabase logDb) {
+        this.fbLogger = new FirebaseLogger(activity.getApplicationContext(), logDb);
         if (fusedLocationProviderClient == null)
             fusedLocationProviderClient = new FusedLocationProviderClient(activity);
         locationRequest.setInterval(interval);
@@ -137,6 +149,7 @@ public class P2pNetwork {
         if (ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(activity, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             Log.d(TAG, "No permission");
+            Toast.makeText(activity, "No permission", Toast.LENGTH_LONG).show();
             publishMessage("00.00000,00.000000,0.00,,0.0,0,0");
             return;
         }
@@ -196,7 +209,11 @@ public class P2pNetwork {
     }
 
     public void setLogging(boolean state) {
-        LOGGING_ENABLED = state;
+        LOCAL_LOGGING_ENABLED = state;
+    }
+
+    public void setServerLogging(boolean state) {
+        SERVER_LOGGING_ENABLED = state;
     }
 
     protected Handler getGenericHandler() {
